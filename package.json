@@ -9,7 +9,9 @@
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "start": "nodemon src/index.ts"
+    "start": "nodemon src/index.ts",
+    "build": "tsc --project ./",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@types/node": "^15.3.0",
