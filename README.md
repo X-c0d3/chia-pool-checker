@@ -5,11 +5,12 @@
 
 Required .env
 
+```ruby
 PAGESIZE = 100
 API_URL = https://www.hpool.com/api/pool
-AUTH_TOKEN = YOUR TOKEN
+AUTH_TOKEN = <YOUR TOKEN>
 XCH_MARKET_PRICE = 49877.18
-
+```
 
 <br />
 Happy Hacking!
