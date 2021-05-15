@@ -15,6 +15,7 @@ import { HpoolOnline } from './types/HpoolOnline';
 import { OnlineMiner, Miner } from './types/Miner';
 
 const AUTH_HEADER = {
+  timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
     Cookie: `auth_token=${AppConfig.AUTH_TOKEN}`,
@@ -26,6 +27,7 @@ const sendLineNotify = async (message: String) => {
   await axios({
     method: 'post',
     url: 'https://notify-api.line.me/api/notify',
+    timeout: 5000,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: `Bearer ${AppConfig.LINE_TOKEN}`,
@@ -74,15 +76,13 @@ const getRevenue = async () => {
     console.log(
       `Latest Block reward : ${block_reward} XCH (${(
         parseFloat(AppConfig.XCH_MARKET_PRICE ?? '') * parseFloat(block_reward)
-      ).toFixed(2)} THB / per plot) `
+      ).toFixed(2)} THB) `
     );
 
     msg = `
-        Latest Height : ${height}
-        Latest Update : ${humanDateFormat}
-        Latest Block reward : ${block_reward} XCH (${(
-        parseFloat(AppConfig.XCH_MARKET_PRICE ?? '') * parseFloat(block_reward)
-      ).toFixed(2)} THB / per plot)
+Latest Height : ${height}
+Latest Update : ${humanDateFormat}
+Latest Block reward : ${block_reward} XCH (${(parseFloat(AppConfig.XCH_MARKET_PRICE ?? '') * parseFloat(block_reward)).toFixed(2)} THB)
     `;
 
     console.log(' ');
@@ -92,7 +92,7 @@ const getRevenue = async () => {
     (prev: number, cur: RevenueData) => prev + Number(cur.block_reward),
     0
   );
-  console.log(' --- Daily Revenue --- ');
+  console.log(' --- Daily Revenue (Unsettlement) --- ');
   console.log('Current Block reward :', unsettlements.length);
   console.log(
     `Current Total : ${totalBlockReward.toFixed(8)} XCH (${(
@@ -102,11 +102,10 @@ const getRevenue = async () => {
 
   return (`
       ${msg}
-        --- Daily Revenue --- 
-        Current Block reward : ${unsettlements.length}
-        Current Total : ${totalBlockReward.toFixed(8)} XCH (${(
-      totalBlockReward * parseFloat(AppConfig.XCH_MARKET_PRICE ?? '')
-    ).toFixed(2)} THB)
+  --- Daily Revenue  (Unsettlement)--- 
+Current Block reward : ${unsettlements.length}
+Current Total : ${totalBlockReward.toFixed(8)} XCH 
+(${(totalBlockReward * parseFloat(AppConfig.XCH_MARKET_PRICE ?? '')).toFixed(2)} THB)
       `
   );
 };
@@ -153,15 +152,14 @@ const getHpoolOnline = async () => {
         }
 
         return `
-        --- CHIA HPOOL CHECKER --
-        Pool Icome ${pool_income} XCH (${(
-            parseFloat(AppConfig.XCH_MARKET_PRICE ?? '') * parseFloat(pool_income)
-          ).toFixed(2)} THB)
-        Previous Income_pb: ${previous_income_pb} XCH
-        Undistributed Income: ${undistributed_income} XCH
-        Payment time: ${payment_time}
-        Capacity: ${(capacity / 1024).toFixed(2)} TB
-        Worker Online: ${online}`;
+  --- CHIA HPOOL CHECKER ---
+Pool Icome (ThaiBath) ${(parseFloat(AppConfig.XCH_MARKET_PRICE ?? '') * parseFloat(pool_income)).toFixed(2)} THB
+Pool Icome ${pool_income} XCH
+Previous Income_pb: ${previous_income_pb} XCH
+Undistributed Income: ${undistributed_income} XCH
+Payment time: ${payment_time}
+Capacity: ${(capacity / 1024).toFixed(2)} TB
+Worker Online: ${online}`;
       } else {
         console.log('ERROR:', response.data.message);
         return response.data.message;
@@ -178,17 +176,20 @@ const getMiner = async () => {
     )
     .then((response) => {
       if (response.data.code == 200) {
-        response.data.data.list.forEach((miner: Miner) => {
+        console.log('\r\n############# WORKER ################');
+        response.data.data.list.forEach((miner: Miner, index) => {
           const { id, capacity, miner_name, online, update_time } = miner;
           const humanDateFormat = new Date(update_time * 1000).toLocaleString();
-          msg += `[+] ${id} Power: ${(capacity / 1024).toFixed(2)} TB ${online ? '<<Online>>' : '<<Offline>>'} LastUpdate :${humanDateFormat}  [${miner_name}] \r\n`;
+          console.log(`[+] ${id} Power: ${(capacity / 1024).toFixed(2)} TB ${online ? '<<Online>>' : '<<Offline>>'} LastUpdate :${humanDateFormat}  [${miner_name}]`);
+          msg += `[${miner_name}] ${(capacity / 1024).toFixed(2)}TB ${online ? ' (ON)' : '(OFF)'} \r\n`;
         });
 
       } else console.log('ERROR:', response.data.message);
     });
-  console.log('\r\n############# WORKER ################');
-  console.log(msg);
-  return msg
+
+  return `
+ --- WORKER ---- 
+${msg}`
 };
 
 //getMiner();
@@ -196,9 +197,10 @@ const getMiner = async () => {
 const run = async () => {
   var poolOnline = await getHpoolOnline();
   var revenue = await getRevenue();
-  await getMiner();
+  var workers = await getMiner();
 
-  sendLineNotify(`${poolOnline} ${revenue}`);
+  if(AppConfig.ENABLE_LINE_NOTIFY)
+    sendLineNotify(`${poolOnline} ${revenue} ${workers}`);
 };
 
 run();
