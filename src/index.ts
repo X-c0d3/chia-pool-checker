@@ -8,7 +8,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { AppConfig } from './constants/Constants';
-import { getHpoolOnline, getRevenue, getMiner } from './util/Hpool';
+import { getHpoolOnline, getRevenue, getMiner, getAssets } from './util/Hpool';
 import { sendLineNotify } from './util/LineNotify';
 import { getPriceMarketCap } from './util/MarketCap'
 
@@ -24,10 +24,13 @@ const run = async () => {
   var poolOnline = await getHpoolOnline(marketPrice);
   var revenue = await getRevenue(marketPrice);
   var workers = await getMiner();
+  await getAssets();
 
   if (AppConfig.ENABLE_LINE_NOTIFY === 'true')
     sendLineNotify(`${poolOnline} ${revenue} ${workers}`);
 };
 
 run();
+
+
 
