@@ -2,7 +2,7 @@ import axios from 'axios';
 import { JSDOM } from 'jsdom';
 import { AppConfig } from '../constants/Constants';
 const HEADER = {
-    timeout: 5000,
+    timeout: 8000,
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         Cookie: `currency=${AppConfig.CURRENCY}`,
@@ -15,6 +15,7 @@ const getPriceMarketCap = async (currency: string) => {
         dom.window.document.querySelectorAll('div').forEach(d => {
             if (d.className.includes('priceValue___')) {
                 priceValue = d?.textContent;
+                //console.log('XCH Market Price:', d?.textContent);
                 return;
             }
         });

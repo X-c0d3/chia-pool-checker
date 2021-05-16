@@ -71,9 +71,9 @@ const getRevenue = async (marketPrice : number) => {
       0
     );
     console.log(' --- Daily Revenue (Unsettlement) --- ');
-    console.log('Current Block reward :', unsettlements.length);
+    console.log('Block reward Attemps :', unsettlements.length);
     console.log(
-      `Current Total : ${totalBlockReward.toFixed(8)} XCH (${(
+      `Total Block reward : ${totalBlockReward.toFixed(8)} XCH (${(
         totalBlockReward * marketPrice
       ).toFixed(2)} ${AppConfig.CURRENCY})`
     );
@@ -81,8 +81,8 @@ const getRevenue = async (marketPrice : number) => {
     return (`
         ${msg}
     --- Daily Revenue  (Unsettlement)--- 
-  Current Block reward : ${unsettlements.length}
-  Current Total : ${totalBlockReward.toFixed(8)} XCH 
+  Block reward attemps: ${unsettlements.length}
+  Total Block reward: ${totalBlockReward.toFixed(8)} XCH 
   (${(totalBlockReward * marketPrice).toFixed(2)} ${AppConfig.CURRENCY})
         `
     );
@@ -117,8 +117,7 @@ const getRevenue = async (marketPrice : number) => {
           console.log(`Previous Income_pb: ${previous_income_pb} XCH`);
           console.log(`Undistributed Income: ${undistributed_income} XCH`);
           console.log(`Payment time: ${payment_time}`);
-          console.log(`Worker Online: ${online}`);
-          console.log(`Worker Offline: ${offline}`);
+          console.log(`Online / Offline Miners: ${online}/${offline}`);
           console.log(`Capacity: ${(capacity / 1024).toFixed(2)} TB`);
           console.log(`Block time: ${block_time}`);
           console.log(' ');
@@ -132,7 +131,7 @@ const getRevenue = async (marketPrice : number) => {
   Undistributed Income: ${undistributed_income} XCH
   Payment time: ${payment_time}
   Capacity: ${(capacity / 1024).toFixed(2)} TB
-  Worker Online: ${online}`;
+  Online / Offline Miners: ${online}/${offline}`;
         } else {
           console.log('ERROR:', response.data.message);
           return response.data.message;
