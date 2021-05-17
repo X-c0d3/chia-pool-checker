@@ -10,6 +10,7 @@ import { Revenue, RevenueData } from '../types/Revenue';
 import { HpoolOnline } from '../types/HpoolOnline';
 import { OnlineMiner, Miner } from '../types/Miner';
 import { Assets, AssetData } from '../types/Assets';
+import { MiningIncome, MiningIncomeData } from '../types/MiningIncome';
 
 const AUTH_HEADER = {
   timeout: 5000,
@@ -112,7 +113,7 @@ const getHpoolOnline = async (marketPrice: number) => {
         console.log(`Type: ${name}`);
         console.log(`Market Price: ${marketPrice} ${AppConfig.CURRENCY}`);
         console.log(
-          `Pool Icome: ${pool_income} XCH (${(marketPrice * parseFloat(pool_income)
+          `Total Icome: ${pool_income} XCH (${(marketPrice * parseFloat(pool_income)
           ).toFixed(2)} ${AppConfig.CURRENCY})`
         );
         console.log(`Previous Income_pb: ${previous_income_pb} XCH`);
@@ -126,8 +127,8 @@ const getHpoolOnline = async (marketPrice: number) => {
         return `
     --- CHIA HPOOL CHECKER ---
   Market Price: ${marketPrice} ${AppConfig.CURRENCY}
-  Pool Icome (ThaiBath) ${(marketPrice * parseFloat(pool_income)).toFixed(2)} ${AppConfig.CURRENCY}
-  Pool Icome ${pool_income} XCH
+  Total Icome: (ThaiBath) ${(marketPrice * parseFloat(pool_income)).toFixed(2)} ${AppConfig.CURRENCY}
+  Total Icome: ${pool_income} XCH
   Previous Income_pb: ${previous_income_pb} XCH
   Undistributed Income: ${undistributed_income} XCH
   Payment time: ${payment_time}
@@ -188,15 +189,39 @@ const getAssets = async (name: string = 'CHIA') => {
         console.log('Total assets :', objAss?.total_assets);
         console.log('Balance :', objAss?.balance);
         console.log('Withdraw :', objAss?.withdraw_amount);
-
+        console.log(' ');
       } else console.log('ERROR:', response.data.message);
     });
   return assetPrice;
+};
+
+
+const getMiningIncome = async (marketPrice : number) => {
+  var miningIncom: MiningIncomeData | any = {};
+  await axios
+    .get<MiningIncome>(
+      `${AppConfig.API_URL}/assets/miningincome`,
+      AUTH_HEADER
+    )
+    .then((response) => {
+      if (response.data.code == 200) {
+        var obj = response.data.data.list?.find(v => v.name === 'CHIA');
+        miningIncom = obj || null;
+
+        console.log(' --- Mining Income --- ');
+        console.log(`Total Income : ${miningIncom?.total_income} XCH (${(marketPrice * parseFloat(miningIncom?.total_income)).toFixed(2)} ${AppConfig.CURRENCY})`);
+        console.log(`Undistributed Income : ${miningIncom?.undistributed_income} XCH (${(marketPrice * parseFloat(miningIncom?.undistributed_income)).toFixed(2)} ${AppConfig.CURRENCY})`);
+        console.log(`Yesterday Income : ${miningIncom?.yesterday_income} XCH (${(marketPrice * parseFloat(miningIncom?.yesterday_income)).toFixed(2)} ${AppConfig.CURRENCY})`);
+
+      } else console.log('ERROR:', response.data.message);
+    });
+  return miningIncom;
 };
 
 export {
   getRevenue,
   getHpoolOnline,
   getMiner,
-  getAssets
+  getAssets,
+  getMiningIncome
 }
