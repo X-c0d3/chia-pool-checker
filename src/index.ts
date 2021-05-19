@@ -34,11 +34,17 @@ const jobs = [
     pattern: '30 08 * * *',
     message: 'Recheck hpool 08:30'
   }, {
+    pattern: '35 10 * * *',
+    message: 'Recheck hpool in 12:00'
+  }, {
     pattern: '0 12 * * *',
     message: 'Recheck hpool in 12:00'
   }, {
     pattern: '0 18 * * *',
     message: 'Recheck hpool 18:00'
+  }, {
+    pattern: '0 22 * * *',
+    message: 'Recheck hpool 22:00'
   }
 ];
 
