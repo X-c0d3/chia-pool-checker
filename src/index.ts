@@ -22,10 +22,11 @@ const runTask = async () => {
   var poolOnline = await getHpoolOnline(marketPrice);
   var revenue = await getRevenue(marketPrice);
   var workers = await getMiner();
-  await getAssets();
-  await getMiningIncome(marketPrice);
+  var miningIncome = await getMiningIncome(marketPrice);
+  var assests = await getAssets(marketPrice);
+  
   if (AppConfig.ENABLE_LINE_NOTIFY === 'true')
-    sendLineNotify(`${poolOnline} ${revenue} ${workers}`);
+    sendLineNotify(`${poolOnline} ${revenue} ${workers} ${miningIncome} ${assests}`);
 };
 
 
