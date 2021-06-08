@@ -3,9 +3,18 @@
 ![Hpool Checker](https://raw.githubusercontent.com/X-c0d3/chia-pool-checker/main/ScreenShot3.png)
 
 ```
+need to install nodejs  
+https://nodejs.org/en/download/
+
+1. Download Source code ลงไว้ที่เครื่อง
 git clone https://github.com/X-c0d3/chia-pool-checker.git
 cd chia-pool-checker
+
+2. ทำการ Install package module
 yarn install
+
+3. สร้างไฟล์ .env ดังตัวอย่างด้านล่าง
+4. รันโปรแกรมด้วยคำสั่ง
 yarn start
 ```
 
