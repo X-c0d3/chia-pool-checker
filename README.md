@@ -35,4 +35,4 @@ EXCHANGE_RATE_USD = 31.5
 ```
 
 <br />
-Happy Hacking!
+ขอให้สนุกกับการขุดครับ :)
