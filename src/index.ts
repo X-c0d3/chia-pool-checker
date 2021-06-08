@@ -16,19 +16,22 @@ import { getPriceMarketCap } from './util/MarketCap';
 
 // Market price from https://coinmarketcap.com/currencies/chia-network/
 const runTask = async () => {
-  var pricevalue = await getPriceMarketCap('chia-network');
-  let marketPrice = parseFloat(pricevalue.replace(/[฿]/g, m => '').replace(/[$]/g, m => '').replace(/[,]/g, m => ''));
-
-  var poolOnline = await getHpoolOnline(marketPrice);
-  var revenue = await getRevenue(marketPrice);
-  var workers = await getMiner();
-  var miningIncome = await getMiningIncome(marketPrice);
-  var assests = await getAssets(marketPrice);
+  try {
+    var pricevalue = await getPriceMarketCap('chia-network');
+    let marketPrice = parseFloat(pricevalue.replace(/[฿]/g, m => '').replace(/[$]/g, m => '').replace(/[,]/g, m => ''));
   
-  if (AppConfig.ENABLE_LINE_NOTIFY === 'true')
-    sendLineNotify(`${poolOnline} ${revenue} ${workers} ${miningIncome} ${assests}`);
-};
-
+    var poolOnline = await getHpoolOnline(marketPrice);
+    var revenue = await getRevenue(marketPrice);
+    var workers = await getMiner();
+    var miningIncome = await getMiningIncome(marketPrice);
+    var assests = await getAssets(marketPrice);
+    
+    if (AppConfig.ENABLE_LINE_NOTIFY === 'true')
+      sendLineNotify(`${poolOnline} ${revenue} ${workers} ${miningIncome} ${assests}`);
+  } catch (error) {
+    console.log('Error:' + error.message)
+  }
+}
 
 const jobs = [
   {
@@ -56,7 +59,6 @@ jobs.forEach((job, index) => {
     console.log(job.message);
     runTask();
   }).start();
-
 });
 console.log('Task Started')
 
