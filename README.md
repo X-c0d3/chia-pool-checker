@@ -15,6 +15,13 @@
 ศึกษาเพิ่มเติมที่ https://crontab.guru/
 ![schedule](https://raw.githubusercontent.com/X-c0d3/chia-pool-checker/main/ScreenShot5.png)
 
+```
+git clone https://github.com/X-c0d3/chia-pool-checker.git
+cd chia-pool-checker
+yarn install
+yarn start
+```
+
 Required .env
 
 ```ruby
