@@ -39,7 +39,7 @@ const jobs = [
     message: 'Recheck hpool 08:30'
   }, {
     pattern: '35 10 * * *',
-    message: 'Recheck hpool in 12:00'
+    message: 'Recheck hpool in 10:35'
   }, {
     pattern: '0 12 * * *',
     message: 'Recheck hpool in 12:00'
@@ -54,7 +54,7 @@ const jobs = [
 
 console.log('Add task');
 jobs.forEach((job, index) => {
-  console.log(`[+${index}] <<${job.pattern}>> - ${job.pattern}`)
+  console.log(`[+${index}] <<${job.pattern}>> - ${job.message}`)
   cronJob.schedule(job.pattern, () => {
     console.log(job.message);
     runTask();
