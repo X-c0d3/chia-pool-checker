@@ -11,6 +11,7 @@ import { HpoolOnline } from '../types/HpoolOnline';
 import { OnlineMiner, Miner } from '../types/Miner';
 import { Assets, AssetData } from '../types/Assets';
 import { MiningIncome, MiningIncomeData } from '../types/MiningIncome';
+import { OnlinePlot, OnlinePlotData } from '../types/OnlinePlot';
 
 const AUTH_HEADER = {
   timeout: 7000,
@@ -98,7 +99,20 @@ Total Block reward: ${totalBlockReward.toFixed(8)} XCH
   );
 };
 
+
+
+const getOnlinePlots = async () => {
+  var res = await axios
+    .get<OnlinePlot>(
+      `${AppConfig.API_URL}/pool/GetPlots?language=en&status=ALL&pool=chia&count=20&page=1`,
+      AUTH_HEADER
+    );
+
+    return res.data.data.list?.find(v => v.status === 'ACTIVE')
+};
+
 const getHpoolOnline = async (marketPrice: number) => {
+  var onlinePlots = await getOnlinePlots();
   return await axios
     .get<HpoolOnline>(
       `${AppConfig.API_URL}/pool/detail?language=en&type=chia`,
@@ -125,9 +139,11 @@ const getHpoolOnline = async (marketPrice: number) => {
         // console.log(`Undistributed Income: ${undistributed_income} XCH (${convert2THB(undistributed_income, marketPrice )})`);
         console.log(`Payment time: ${payment_time}`);
         console.log(`Online/Offline Miners: ${online}/${offline}`);
-        console.log(`Capacity: ${(capacity / 1024).toFixed(2)} TB`);
+        console.log(`Capacity: ${(capacity / 1024).toFixed(2)} TiB`);
         console.log(`Block time: ${block_time}s`);
-        console.log(' ');
+        console.log(`Pool Public Key: ${onlinePlots?.public_key}`)
+        console.log('Online Plots: ', onlinePlots?.size)
+        console.log(' '); 
 
          //For Line Notify format
         return `
@@ -137,7 +153,9 @@ Total Icome: ${convert2THB(pool_income, marketPrice )} (ThaiBath)
 Total Icome: ${pool_income} XCH
 Payment time: ${payment_time}
 Capacity: ${(capacity / 1024).toFixed(2)} TB
-Online/Offline Miners: ${online}/${offline}`;
+Online/Offline Miners: ${online}/${offline}
+Pool Public Key: ${onlinePlots?.public_key}
+Online Plots: ${onlinePlots?.size}`;
       } else {
         console.log('ERROR:', response.data.message);
         return response.data.message;
