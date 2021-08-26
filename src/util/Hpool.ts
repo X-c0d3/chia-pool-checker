@@ -92,8 +92,8 @@ Latest Block reward : ${block_reward} XCH (${convert2THB(block_reward, marketPri
   return (`
         ${msg}
     --- Daily Revenue  (Unsettlement)--- 
-Block reward attemps: ${unsettlements.length}
-Total Block reward: ${totalBlockReward.toFixed(8)} XCH 
+Reward attemps: ${unsettlements.length}
+Block reward: ${totalBlockReward.toFixed(8)} XCH 
 (${convert2THB(totalBlockReward, marketPrice )})
         `
   );
@@ -102,13 +102,18 @@ Total Block reward: ${totalBlockReward.toFixed(8)} XCH
 
 
 const getOnlinePlots = async () => {
-  var res = await axios
+  return await axios
     .get<OnlinePlot>(
       `${AppConfig.API_URL}/pool/GetPlots?language=en&status=ALL&pool=chia&count=20&page=1`,
       AUTH_HEADER
-    );
+    ).then(response => {
+      if (response.data.code == 200) {
+          return response.data.data.list?.find(v => v.status === 'ACTIVE')
+      } else {
+         console.log('ERROR:', response.data.message);
+       }
+    });
 
-    return res.data.data.list?.find(v => v.status === 'ACTIVE')
 };
 
 const getHpoolOnline = async (marketPrice: number) => {
@@ -149,7 +154,7 @@ const getHpoolOnline = async (marketPrice: number) => {
         return `
     --- CHIA HPOOL CHECKER ---
 Market Price: ${marketPrice} ${AppConfig.CURRENCY}
-Total Icome: ${convert2THB(pool_income, marketPrice )} (ThaiBath)
+Total Icome: ${convert2THB(pool_income, marketPrice )}
 Total Icome: ${pool_income} XCH
 Payment time: ${payment_time}
 Capacity: ${(capacity / 1024).toFixed(2)} TB

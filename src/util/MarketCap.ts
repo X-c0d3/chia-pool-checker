@@ -19,7 +19,7 @@ const getPriceMarketCap = async (currency: string) => {
     await axios.get(`https://coinmarketcap.com/currencies/${currency}/`, HEADER).then((res) => {
         const dom = new JSDOM(res.data);
         dom.window.document.querySelectorAll('div').forEach(d => {
-            if (d.className.includes('priceValue___')) {
+            if (d.className.includes('priceValue')) {
                 priceValue = d?.textContent;
                 //console.log('XCH Market Price:', d?.textContent);
                 return;
