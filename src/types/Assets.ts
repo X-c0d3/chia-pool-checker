@@ -12,7 +12,7 @@ export type AssetData = {
 
 export type AssetCurrency = {
   cny: number;
-  usdt: number;
+  usdt: string;
 };
 
 interface Assets {

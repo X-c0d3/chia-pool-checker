@@ -239,7 +239,7 @@ const getAssets = async (marketPrice: number, name: string = 'CHIA') => {
         var { usdt } = response.data.data.currency;
         let objAss = response.data.data.list.find(v => v.name === name)
         if (objAss) {
-          objAss.usdt = usdt;
+          objAss.usdt = parseFloat(usdt.replace(/[฿]/g, m => '').replace(/[$]/g, m => ''));
           assetPrice = objAss;
         }
 
