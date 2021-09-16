@@ -26,9 +26,9 @@ const runTask = async () => {
     var miningIncome = await getMiningIncome(marketPrice);
     var assests = await getAssets(marketPrice);
     
-    if (AppConfig.ENABLE_LINE_NOTIFY === 'true')
+    if (Boolean(AppConfig.ENABLE_LINE_NOTIFY))
       sendLineNotify(`${poolOnline} ${revenue} ${workers} ${miningIncome} ${assests}`);
-  } catch (error) {
+  } catch (error: any) {
     console.log('Error:' + error.message)
   }
 }
